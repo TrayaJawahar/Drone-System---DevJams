@@ -1,0 +1,602 @@
+[
+    {
+        "scenario_index": 1,
+        "start": [
+            5,
+            40
+        ],
+        "goal": [
+            49,
+            46
+        ],
+        "ppo_success": false,
+        "ppo_steps": 2,
+        "ppo_distance": 1.4142135623730951,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 2,
+        "ppo_battery_used": 1.4000000000000057,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 44,
+        "astar_distance": 47.31370849898475,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 45,
+        "astar_battery_used": 23.599999999999998,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 2,
+        "start": [
+            41,
+            21
+        ],
+        "goal": [
+            17,
+            8
+        ],
+        "ppo_success": false,
+        "ppo_steps": 2,
+        "ppo_distance": 1.4142135623730951,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 2,
+        "ppo_battery_used": 1.2000000000000028,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 25,
+        "astar_distance": 29.970562748477146,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 26,
+        "astar_battery_used": 14.899999999999997,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 3,
+        "start": [
+            31,
+            14
+        ],
+        "goal": [
+            49,
+            35
+        ],
+        "ppo_success": false,
+        "ppo_steps": 2,
+        "ppo_distance": 1.4142135623730951,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 2,
+        "ppo_battery_used": 1.2000000000000028,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 21,
+        "astar_distance": 28.45584412271572,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 22,
+        "astar_battery_used": 14.099999999999994,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 4,
+        "start": [
+            9,
+            5
+        ],
+        "goal": [
+            35,
+            38
+        ],
+        "ppo_success": false,
+        "ppo_steps": 1,
+        "ppo_distance": 0.0,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 1,
+        "ppo_battery_used": 0.7000000000000028,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 38,
+        "astar_distance": 47.52691193458118,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 39,
+        "astar_battery_used": 23.59999999999999,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 5,
+        "start": [
+            20,
+            35
+        ],
+        "goal": [
+            6,
+            2
+        ],
+        "ppo_success": false,
+        "ppo_steps": 1,
+        "ppo_distance": 0.0,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 1,
+        "ppo_battery_used": 0.5,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 35,
+        "astar_distance": 41.62741699796951,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 36,
+        "astar_battery_used": 20.699999999999992,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 6,
+        "start": [
+            37,
+            18
+        ],
+        "goal": [
+            0,
+            25
+        ],
+        "ppo_success": false,
+        "ppo_steps": 1,
+        "ppo_distance": 0.0,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 1,
+        "ppo_battery_used": 0.5,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 37,
+        "astar_distance": 44.041630560342604,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 38,
+        "astar_battery_used": 21.899999999999995,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 7,
+        "start": [
+            15,
+            44
+        ],
+        "goal": [
+            25,
+            25
+        ],
+        "ppo_success": false,
+        "ppo_steps": 1,
+        "ppo_distance": 0.0,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 1,
+        "ppo_battery_used": 0.5,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 20,
+        "astar_distance": 25.384776310850242,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 21,
+        "astar_battery_used": 12.599999999999998,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 8,
+        "start": [
+            15,
+            16
+        ],
+        "goal": [
+            23,
+            44
+        ],
+        "ppo_success": false,
+        "ppo_steps": 1,
+        "ppo_distance": 0.0,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 1,
+        "ppo_battery_used": 0.5,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 28,
+        "astar_distance": 32.97056274847714,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 29,
+        "astar_battery_used": 16.399999999999995,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 9,
+        "start": [
+            14,
+            36
+        ],
+        "goal": [
+            28,
+            17
+        ],
+        "ppo_success": false,
+        "ppo_steps": 3,
+        "ppo_distance": 2.8284271247461903,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 3,
+        "ppo_battery_used": 2.1000000000000085,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 22,
+        "astar_distance": 26.55634918610405,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 23,
+        "astar_battery_used": 13.199999999999996,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 10,
+        "start": [
+            2,
+            11
+        ],
+        "goal": [
+            27,
+            4
+        ],
+        "ppo_success": false,
+        "ppo_steps": 1,
+        "ppo_distance": 0.0,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 1,
+        "ppo_battery_used": 0.5,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 27,
+        "astar_distance": 31.55634918610405,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 28,
+        "astar_battery_used": 15.699999999999996,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 11,
+        "start": [
+            42,
+            31
+        ],
+        "goal": [
+            20,
+            36
+        ],
+        "ppo_success": false,
+        "ppo_steps": 1,
+        "ppo_distance": 0.0,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 1,
+        "ppo_battery_used": 0.5,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 22,
+        "astar_distance": 24.071067811865476,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 23,
+        "astar_battery_used": 12.0,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 12,
+        "start": [
+            40,
+            37
+        ],
+        "goal": [
+            47,
+            16
+        ],
+        "ppo_success": false,
+        "ppo_steps": 5,
+        "ppo_distance": 5.656854249492381,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 5,
+        "ppo_battery_used": 3.3000000000000114,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 22,
+        "astar_distance": 24.485281374238575,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 23,
+        "astar_battery_used": 12.199999999999998,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 13,
+        "start": [
+            47,
+            17
+        ],
+        "goal": [
+            18,
+            0
+        ],
+        "ppo_success": false,
+        "ppo_steps": 5,
+        "ppo_distance": 5.656854249492381,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 5,
+        "ppo_battery_used": 3.500000000000014,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 29,
+        "astar_distance": 36.04163056034262,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 30,
+        "astar_battery_used": 17.89999999999999,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 14,
+        "start": [
+            33,
+            39
+        ],
+        "goal": [
+            3,
+            47
+        ],
+        "ppo_success": false,
+        "ppo_steps": 4,
+        "ppo_distance": 4.242640687119286,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 4,
+        "ppo_battery_used": 2.6000000000000085,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 30,
+        "astar_distance": 34.14213562373095,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 31,
+        "astar_battery_used": 16.999999999999996,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 15,
+        "start": [
+            36,
+            19
+        ],
+        "goal": [
+            22,
+            4
+        ],
+        "ppo_success": false,
+        "ppo_steps": 1,
+        "ppo_distance": 0.0,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 1,
+        "ppo_battery_used": 0.5,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 15,
+        "astar_distance": 20.798989873223338,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 16,
+        "astar_battery_used": 10.299999999999999,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 16,
+        "start": [
+            2,
+            36
+        ],
+        "goal": [
+            1,
+            11
+        ],
+        "ppo_success": false,
+        "ppo_steps": 1,
+        "ppo_distance": 0.0,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 1,
+        "ppo_battery_used": 0.5,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 25,
+        "astar_distance": 27.899494936611667,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 26,
+        "astar_battery_used": 13.899999999999999,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 17,
+        "start": [
+            31,
+            37
+        ],
+        "goal": [
+            28,
+            8
+        ],
+        "ppo_success": false,
+        "ppo_steps": 2,
+        "ppo_distance": 1.4142135623730951,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 2,
+        "ppo_battery_used": 1.2000000000000028,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 29,
+        "astar_distance": 31.07106781186548,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 30,
+        "astar_battery_used": 15.5,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 18,
+        "start": [
+            39,
+            0
+        ],
+        "goal": [
+            9,
+            10
+        ],
+        "ppo_success": false,
+        "ppo_steps": 4,
+        "ppo_distance": 0.0,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 4,
+        "ppo_battery_used": 2.6000000000000085,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 32,
+        "astar_distance": 38.62741699796951,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 33,
+        "astar_battery_used": 19.199999999999992,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 19,
+        "start": [
+            10,
+            35
+        ],
+        "goal": [
+            29,
+            4
+        ],
+        "ppo_success": false,
+        "ppo_steps": 1,
+        "ppo_distance": 0.0,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 1,
+        "ppo_battery_used": 0.5,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 31,
+        "astar_distance": 39.698484809834994,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 32,
+        "astar_battery_used": 19.699999999999992,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    },
+    {
+        "scenario_index": 20,
+        "start": [
+            29,
+            16
+        ],
+        "goal": [
+            45,
+            41
+        ],
+        "ppo_success": false,
+        "ppo_steps": 1,
+        "ppo_distance": 0.0,
+        "ppo_net_quality": 0.0,
+        "ppo_outage_steps": 1,
+        "ppo_battery_used": 0.7000000000000028,
+        "ppo_failure_reason": "collision",
+        "astar_success": true,
+        "astar_steps": 27,
+        "astar_distance": 34.45584412271572,
+        "astar_net_quality": 0.0,
+        "astar_outage_steps": 28,
+        "astar_battery_used": 17.09999999999999,
+        "ppo_rssi": -110.0,
+        "ppo_latency": 500.0,
+        "ppo_packet_loss": 1.0,
+        "astar_rssi": -110.0,
+        "astar_latency": 500.0,
+        "astar_packet_loss": 1.0
+    }
+]

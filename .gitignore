@@ -1,0 +1,9 @@
+
+data/config/api_keys.yaml
+data/raw/
+data/processed/
+*.pyc
+__pycache__/
+.venv/
+*.log
+api_keys.yaml
