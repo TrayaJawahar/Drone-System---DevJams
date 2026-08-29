@@ -1,6 +1,7 @@
 import os
 import sys
 import yaml
+import numpy as np
 from rl.data.data_loader import load_geo_network_map, get_data_quality_summary, print_quality_summary_report
 from rl.utils.logger import setup_logger
 
@@ -38,7 +39,34 @@ def main():
         logger.error(f"Validation failed: Unexpected error: {e}")
         sys.exit(1)
 
-    logger.info("Validation successful! Grid and columns are correct.")
+    # --- STRICT VALIDATION GATE ---
+    critical_columns = ["elevation", "slope", "nearest_tower_distance", "rssi", "rsrp", "sinr"]
+    failed_columns = []
+
+    for col in critical_columns:
+        if col not in df.columns:
+            failed_columns.append(f"{col}: column completely missing")
+        else:
+            nan_ratio = df[col].isna().sum() / len(df)
+            if nan_ratio > 0.99:
+                failed_columns.append(f"{col}: {nan_ratio*100:.1f}% missing")
+
+    # Check network confidence variance
+    if "network_data_confidence" in df.columns:
+        if df["network_data_confidence"].std() < 0.001:
+            failed_columns.append("network_data_confidence: zero variance (flat score)")
+
+    if failed_columns:
+        print("\n" + "="*60)
+        print("DATA VALIDATION FAILED")
+        print("="*60)
+        for fail in failed_columns:
+            print(f"  {fail}")
+        print("\nPPO training aborted because the environment dataset is invalid.")
+        print("="*60 + "\n")
+        sys.exit(1)
+
+    logger.info("Validation successful! Grid, columns, and terrain/network data are valid.")
     summary = get_data_quality_summary(df)
     print_quality_summary_report(summary)
     sys.exit(0)

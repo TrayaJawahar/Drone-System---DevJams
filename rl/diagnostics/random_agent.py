@@ -140,10 +140,10 @@ def run_random_agent(n_episodes: int = 100, config_path: str = "rl/config/rl_con
     print(f"\n{'='*60}")
     print(f"VERDICT:")
     if avg_len > 10:
-        print(f"  ✅ Average episode length {avg_len:.1f} > 10 — environment is healthy.")
+        print(f"  [OK] Average episode length {avg_len:.1f} > 10 -- environment is healthy.")
         print(f"  PPO training can proceed.")
     else:
-        print(f"  ❌ Average episode length {avg_len:.1f} ≤ 10 — environment still broken.")
+        print(f"  [FAIL] Average episode length {avg_len:.1f} <= 10 -- environment still broken.")
         print(f"  Do NOT start PPO training yet. Check termination reasons above.")
     print("=" * 60 + "\n")
 

@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import rasterio
 from rasterio.transform import rowcol
+from rasterio.warp import transform as warp_transform
 from rl.utils.logger import setup_logger
 
 logger = setup_logger("terrain_processor")
@@ -61,10 +62,16 @@ def extract_terrain_for_grid(grid_df: pd.DataFrame, dem_path: str) -> pd.DataFra
 
             # Convert lat/lon to raster row/col index
             try:
-                rr, cc = rowcol(transform, lon, lat)
-                if 0 <= rr < dem_array.shape[0] and 0 <= cc < dem_array.shape[1]:
-                    elevations[i] = dem_array[rr, cc]
-                    slopes[i] = slope_array[rr, cc]
+                # Transform EPSG:4326 to raster CRS
+                xs, ys = warp_transform('EPSG:4326', src.crs, [lon], [lat])
+                rr, cc = rowcol(transform, xs[0], ys[0])
+                
+                # Clip to raster bounds to avoid off-by-one Edge NaNs
+                rr = max(0, min(rr, dem_array.shape[0] - 1))
+                cc = max(0, min(cc, dem_array.shape[1] - 1))
+                
+                elevations[i] = dem_array[rr, cc]
+                slopes[i] = slope_array[rr, cc]
             except Exception as e:
                 logger.debug(f"Could not sample DEM at ({lat}, {lon}): {e}")
 

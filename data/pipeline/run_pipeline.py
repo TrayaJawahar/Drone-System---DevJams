@@ -54,19 +54,33 @@ def load_config(config_path: str) -> dict:
     with open(config_path, "r", encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
 
-    # Inject API keys from api_keys.yaml if it exists
+    # 1. Start with any keys already in pipeline_config.yaml
+    topo_key = cfg.get("terrain", {}).get("api_key", "")
+    cell_key = cfg.get("towers", {}).get("api_key", "")
+
+    # 2. Check api_keys.yaml
     keys_path = APIKEYS_PATH
     if os.path.exists(keys_path):
         with open(keys_path, "r", encoding="utf-8") as f:
             keys = yaml.safe_load(f) or {}
-        topo_key = keys.get("opentopography_api_key", "")
-        cell_key = keys.get("opencellid_api_key", "")
-        if topo_key and not topo_key.startswith("YOUR_"):
-            cfg.setdefault("terrain", {})["api_key"] = topo_key
-        if cell_key and not cell_key.startswith("YOUR_"):
-            cfg.setdefault("towers", {})["api_key"] = cell_key
+        if keys.get("opentopography_api_key"):
+            topo_key = keys.get("opentopography_api_key")
+        if keys.get("opencellid_api_key"):
+            cell_key = keys.get("opencellid_api_key")
     else:
-        logger.warning(f"api_keys.yaml not found at {keys_path}. API keys must be set in pipeline_config.yaml.")
+        logger.warning(f"api_keys.yaml not found at {keys_path}.")
+
+    # 3. Check environment variables (Highest priority)
+    if os.environ.get("OPENTOPOGRAPHY_API_KEY"):
+        topo_key = os.environ.get("OPENTOPOGRAPHY_API_KEY")
+    if os.environ.get("OPENCELLID_API_KEY"):
+        cell_key = os.environ.get("OPENCELLID_API_KEY")
+
+    # Inject resolved keys, filtering out placeholders
+    if topo_key and not topo_key.startswith("YOUR_"):
+        cfg.setdefault("terrain", {})["api_key"] = topo_key
+    if cell_key and not cell_key.startswith("YOUR_"):
+        cfg.setdefault("towers", {})["api_key"] = cell_key
 
     return cfg
 

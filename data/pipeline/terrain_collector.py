@@ -57,10 +57,10 @@ def download_terrain_dem(bbox: dict, config: dict, output_dir: str) -> str:
 
     params = {
         "demtype": dem_type,
-        "south": bbox["min_lat"],
-        "north": bbox["max_lat"],
-        "west": bbox["min_lon"],
-        "east": bbox["max_lon"],
+        "south": bbox["min_lat"] - 0.01,
+        "north": bbox["max_lat"] + 0.01,
+        "west": bbox["min_lon"] - 0.01,
+        "east": bbox["max_lon"] + 0.01,
         "outputFormat": "GTiff",
         "API_Key": api_key,
     }

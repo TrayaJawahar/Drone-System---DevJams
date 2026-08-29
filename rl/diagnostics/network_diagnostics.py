@@ -136,11 +136,11 @@ def run_network_diagnostics(config_path: str = "rl/config/rl_config.yaml"):
     print(f"  Score mean ± std       : {scores_arr.mean():.4f} ± {scores_arr.std():.4f}")
 
     if scores_arr.std() < 0.01:
-        print("\n  ⚠️  WARNING: network_score has very low variance (<0.01).")
+        print("\n  [WARNING] network_score has very low variance (<0.01).")
         print("     PPO cannot learn network-aware navigation with this data.")
-        print("     → Add OpenCelliD API key and re-run the data pipeline.")
+        print("     --> Add OpenCelliD API key and re-run the data pipeline.")
     else:
-        print("\n  ✅ network_score has meaningful variation — network reward will work.")
+        print("\n  [OK] network_score has meaningful variation -- network reward will work.")
 
     # ── 3. Tower source breakdown ─────────────────────────────────────────────
     if "network_source" in df.columns:

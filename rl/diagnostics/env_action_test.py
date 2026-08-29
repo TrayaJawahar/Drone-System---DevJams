@@ -136,7 +136,7 @@ def run_action_test(config_path: str = "rl/config/rl_config.yaml"):
         expected_new_pos = (expected_nx, expected_ny) if (in_bounds and is_free) else test_cell
         pos_correct = new_pos == expected_new_pos
 
-        status = "✅" if pos_correct else "❌"
+        status = "[OK]" if pos_correct else "[FAIL]"
         results.append({
             "action": action,
             "name": action_name,
@@ -170,15 +170,15 @@ def run_action_test(config_path: str = "rl/config/rl_config.yaml"):
     print(f"  Invalid moves  : {invalid_moves} / 8  "
           f"({boundary_moves} boundary, {coll_moves} obstacle)")
     print(f"  Pos correct    : {pos_correct} / 8")
-    print(f"  No premature termination: {'✅' if all(not r['terminated'] for r in results) else '⚠️  Some actions terminated early!'}")
+    print(f"  No premature termination: {'[OK]' if all(not r['terminated'] for r in results) else '[WARN] Some actions terminated early!'}")
     print(f"\n  Rewards range: [{min(r['reward'] for r in results):.3f}, "
           f"{max(r['reward'] for r in results):.3f}]")
 
     print("\n" + "=" * 70)
     print("All 8 actions tested. Position stays on invalid moves: "
-          + ("✅ CONFIRMED" if all(
+          + ("[OK] CONFIRMED" if all(
               r["new_pos"] == test_cell for r in results if r["is_invalid"]
-          ) else "❌ FAILED"))
+          ) else "[FAIL]"))
     print("=" * 70 + "\n")
 
     return results

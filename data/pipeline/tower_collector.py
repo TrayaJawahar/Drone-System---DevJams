@@ -50,8 +50,11 @@ def download_towers_in_area(bbox: dict, config: dict, output_dir: str) -> str:
     # Check cache
     if os.path.exists(output_path):
         row_count = _count_csv_rows(output_path)
-        logger.info(f"Using cached tower data at {output_path} ({row_count} towers)")
-        return output_path
+        if row_count > 0:
+            logger.info(f"Using cached tower data at {output_path} ({row_count} towers)")
+            return output_path
+        else:
+            logger.warning(f"Cached tower data at {output_path} is empty. Ignoring cache.")
 
     tower_cfg = config.get("towers", {})
     api_key = tower_cfg.get("api_key", "")
@@ -121,6 +124,10 @@ def download_towers_in_area(bbox: dict, config: dict, output_dir: str) -> str:
                 error_data = json.loads(content)
                 error_msg = error_data.get("message", str(error_data))
                 raise RuntimeError(f"OpenCelliD API error: {error_msg}")
+                
+            # Check for error response (sometimes returned as CSV with info,code)
+            if "info,code" in content or "BBOX too big" in content:
+                raise RuntimeError(f"OpenCelliD API error: {content.strip()}")
 
             with open(output_path, "w", encoding="utf-8") as f:
                 f.write(content)

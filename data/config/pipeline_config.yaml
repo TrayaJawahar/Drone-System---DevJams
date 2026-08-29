@@ -12,8 +12,8 @@ region:
   center_longitude: 77.6245
 
   # Coverage area (kilometers)
-  width_km: 5.0
-  height_km: 5.0
+  width_km: 2.0
+  height_km: 2.0
 
 grid:
   # Cell resolution in meters (100m = 50x50 grid for 5km x 5km)
@@ -48,7 +48,7 @@ terrain:
 
 towers:
   # OpenCelliD API endpoint
-  endpoint: "https://us1.unwiredlabs.com/v2/towers"
+  endpoint: "https://opencellid.org/cell/getInArea"
 
   # Alternative bulk download (recommended for large areas)
   bulk_download_url: "https://opencellid.org/ocid/downloads"
