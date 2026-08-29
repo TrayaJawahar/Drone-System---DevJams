@@ -18,7 +18,7 @@ export function CoordinateInput({ label, placeholder, value, onChange, invalid }
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         aria-invalid={invalid}
-        className="mt-1.5 w-full rounded-md border border-input bg-background/60 px-3 py-2 font-mono text-sm text-foreground outline-none transition-colors placeholder:font-sans placeholder:text-muted-foreground/70 focus:border-ring focus:ring-2 focus:ring-ring/25 aria-[invalid=true]:border-destructive"
+        className="mt-1.5 w-full rounded-md border border-input bg-background/60 px-3 py-2 font-mono text-sm text-foreground outline-none transition-colors placeholder-font-sans placeholder-text-muted-foreground focus-visible:ring-1 focus-visible:border-ring aria-[invalid=true]:border-destructive"
       />
     </label>
   );

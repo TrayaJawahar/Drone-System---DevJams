@@ -1,4 +1,5 @@
-import { formatPoint, haversineKm, MAX_RANGE_KM, type LatLng } from "@/lib/mission";
+import { formatPoint, haversineKm, MAX_RANGE_KM } from "../lib/mission";
+import type { LatLng } from "../lib/mission";
 
 type Props = { start: LatLng | null; destination: LatLng | null };
 
@@ -10,18 +11,18 @@ export function MissionSummary({ start, destination }: Props) {
       <h4 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
         Selected Mission
       </h4>
-      <dl className="mt-3 space-y-2 text-sm">
-        <div className="flex items-baseline justify-between gap-3">
+      <dl className="mt-3 space-y-2 text-sm" style={{ margin: 0 }}>
+        <div className="flex items-center justify-between gap-3 mt-2">
           <dt className="text-muted-foreground">Start</dt>
-          <dd className="font-mono text-accent">{formatPoint(start)}</dd>
+          <dd className="font-mono text-accent" style={{ margin: 0 }}>{formatPoint(start)}</dd>
         </div>
-        <div className="flex items-baseline justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 mt-2">
           <dt className="text-muted-foreground">Destination</dt>
-          <dd className="font-mono text-destination">{formatPoint(destination)}</dd>
+          <dd className="font-mono text-destination" style={{ margin: 0 }}>{formatPoint(destination)}</dd>
         </div>
-        <div className="flex items-baseline justify-between gap-3 border-t border-border/60 pt-2">
+        <div className="flex items-center justify-between gap-3 border-t border-border/60 pt-2 mt-2">
           <dt className="text-muted-foreground">Direct distance</dt>
-          <dd className="font-mono text-foreground">
+          <dd className="font-mono text-foreground" style={{ margin: 0 }}>
             {distanceKm !== null ? `${distanceKm.toFixed(2)} km` : "—"}
           </dd>
         </div>

@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 
 export function Header() {
   return (
@@ -6,7 +6,7 @@ export function Header() {
       <div className="flex h-full items-center gap-3 px-5">
         <Link to="/" className="flex items-center gap-3">
           <span className="grid size-8 place-items-center rounded-md border border-accent/40 bg-accent/10 text-accent">
-            <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.6">
+            <svg viewBox="0 0 24 24" className="size-4 w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.6">
               <circle cx="12" cy="12" r="2.6" />
               <path d="M12 9.4V6m0 12v-3.4M9.4 12H6m12 0h-3.4" />
               <circle cx="5" cy="5" r="2" />

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import L from "leaflet";
-import type { LatLng } from "@/lib/mission";
+import type { LatLng } from "../lib/mission";
 
 type Props = {
   start: LatLng | null;
