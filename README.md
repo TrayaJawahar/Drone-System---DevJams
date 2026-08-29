@@ -1,4 +1,4 @@
-Network-Aware Reinforcement Learning for Autonomous Drone Route Planning:
+Network-Aware Reinforcement Learning for Autonomous Drone Route Planning: 
 This repository contains a modular Reinforcement Learning (RL) framework for autonomous drone route planning using a preprocessed Geo-Network Map. The system trains a Proximal Policy Optimization (PPO) agent to navigate efficiently while balancing multiple objectives:
 
 Reaching the destination successfully
