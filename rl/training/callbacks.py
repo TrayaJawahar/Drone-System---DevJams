@@ -127,7 +127,26 @@ class CustomMetricsCallback(BaseCallback):
             self.logger.record("episode/invalid_move_rate",   inv_rate)
             self.logger.record("episode/distance_to_goal",    dist_goal)
             self.logger.record("episode/distance_reduction",  dist_red)
+            self.logger.record("episode/min_dist_reached",    info.get("ep_min_dist_reached", -1))
+            self.logger.record("episode/steps_closer",        info.get("ep_steps_closer", 0))
+            self.logger.record("episode/steps_away",          info.get("ep_steps_away", 0))
             self.logger.record("episode/battery_remaining",   battery_rem)
+            
+            # Battery breakdowns
+            self.logger.record("battery/cost_movement",       info.get("ep_bat_cost_movement", 0.0))
+            self.logger.record("battery/cost_slope",          info.get("ep_bat_cost_slope", 0.0))
+            self.logger.record("battery/cost_invalid",        info.get("ep_bat_cost_invalid", 0.0))
+
+            # Reward Breakdown
+            self.logger.record("reward/progress",             info.get("progress_reward", 0.0))
+            self.logger.record("reward/network",              info.get("network_reward", 0.0))
+            self.logger.record("reward/safety",               info.get("safety_reward", 0.0))
+            self.logger.record("reward/outage_penalty",       info.get("outage_penalty", 0.0))
+            self.logger.record("reward/movement_penalty",     info.get("movement_penalty", 0.0))
+            self.logger.record("reward/energy_penalty",       info.get("energy_penalty", 0.0))
+            self.logger.record("reward/invalid_penalty",      info.get("invalid_penalty", 0.0))
+            self.logger.record("reward/goal_reward",          info.get("goal_reward", 0.0))
+            self.logger.record("reward/timeout_penalty",      info.get("timeout_penalty", 0.0))
 
             # Termination: log 0/1 per reason so TB shows separate curves
             self.logger.record("termination/goal_reached",     1.0 if term_goal    else 0.0)

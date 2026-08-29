@@ -39,7 +39,8 @@ class StateBuilder:
         # 10. Current Network Quality (1)
         # 11. Network Data Confidence (1)
         # 12. Battery Remaining (1)
-        size = 19
+        # 13. Valid Local Actions (8)
+        size = 27
 
         # Optional Network Features (Value + Mask for 6 metrics)
         # rssi, rsrp, sinr, latency, packet_loss, throughput (6 * 2 = 12)
@@ -148,6 +149,14 @@ class StateBuilder:
         # 5. Battery (0.0 to 1.0)
         norm_battery = battery / 100.0
 
+        # 6. Valid Local Actions (8 directions)
+        valid_actions = np.zeros(8, dtype=np.float32)
+        for action_idx in range(8):
+            dx_a, dy_a = ACTION_MAP[action_idx]
+            nx_a, ny_a = cx + dx_a, cy + dy_a
+            if 0 <= nx_a < w and 0 <= ny_a < h and grid_free_mask[nx_a, ny_a]:
+                valid_actions[action_idx] = 1.0
+
         # Assembly: Core State
         state = [
             norm_cx, norm_cy,
@@ -158,7 +167,8 @@ class StateBuilder:
             norm_nearest_obs,
             net_score,
             net_confidence,
-            norm_battery
+            norm_battery,
+            *valid_actions
         ]
 
         # 6. Optional Network Features (Value + Mask)

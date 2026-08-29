@@ -117,6 +117,12 @@ class DroneNetworkEnv(gym.Env):
         self.invalid_move_count       = 0  # boundary + obstacle violations
         self.visited_cells            = set()
         self.current_route            = []
+        self.steps_moving_closer      = 0
+        self.steps_moving_away        = 0
+        self.min_dist_reached         = float('inf')
+        self.battery_cost_movement    = 0.0
+        self.battery_cost_slope       = 0.0
+        self.battery_cost_invalid     = 0.0
 
         # Eval mode
         self.eval_missions = None
@@ -174,6 +180,11 @@ class DroneNetworkEnv(gym.Env):
         self.consecutive_outage_steps = 0
         self.total_outage_steps       = 0
         self.invalid_move_count       = 0
+        self.steps_moving_closer      = 0
+        self.steps_moving_away        = 0
+        self.battery_cost_movement    = 0.0
+        self.battery_cost_slope       = 0.0
+        self.battery_cost_invalid     = 0.0
         self.visited_cells            = {self.current_pos}
         self.current_route            = [self.current_pos]
 
@@ -187,6 +198,7 @@ class DroneNetworkEnv(gym.Env):
             (self.current_pos[0] - self.goal_pos[0])**2 +
             (self.current_pos[1] - self.goal_pos[1])**2
         ))
+        self.min_dist_reached = self._ep_start_dist
 
         # Record initial cell metrics
         init_cell = self.cell_lookup.get(self.current_pos, {})
@@ -218,13 +230,22 @@ class DroneNetworkEnv(gym.Env):
         is_boundary_violation = False
         is_collision          = False
 
-        # ── 1. Boundary check ────────────────────────────────────────────────
-        if not (0 <= nx < self.grid_width and 0 <= ny < self.grid_height):
+        # ── 1. Corner cutting check ──────────────────────────────────────────
+        if dx != 0 and dy != 0:
+            cx_valid = (0 <= cx + dx < self.grid_width and 0 <= cy < self.grid_height)
+            cy_valid = (0 <= cx < self.grid_width and 0 <= cy + dy < self.grid_height)
+            if (not cx_valid or not self.mission_gen.grid_free_mask[cx + dx, cy]) or \
+               (not cy_valid or not self.mission_gen.grid_free_mask[cx, cy + dy]):
+                is_collision = True
+                nx, ny = cx, cy
+
+        # ── 2. Boundary check ────────────────────────────────────────────────
+        if not is_collision and not (0 <= nx < self.grid_width and 0 <= ny < self.grid_height):
             is_boundary_violation = True
             nx, ny = cx, cy          # drone stays
 
-        # ── 2. Obstacle check ────────────────────────────────────────────────
-        elif not self.mission_gen.grid_free_mask[nx, ny]:
+        # ── 3. Obstacle check ────────────────────────────────────────────────
+        elif not is_collision and not self.mission_gen.grid_free_mask[nx, ny]:
             is_collision = True
             nx, ny = cx, cy          # drone stays
 
@@ -237,12 +258,19 @@ class DroneNetworkEnv(gym.Env):
         base_cost  = self.diagonal_cost if is_diagonal(action) else self.horizontal_cost
         if is_invalid_move:
             step_energy_spent = base_cost * 0.5   # half cost for wasted move
+            self.battery_cost_invalid += step_energy_spent
         else:
             cell_data = self.cell_lookup.get((nx, ny), {})
             slope     = cell_data.get("slope", 0.0)
             if pd.isnull(slope):
                 slope = 0.0
-            step_energy_spent = base_cost + max(0.0, slope) * self.slope_factor
+            
+            movement_cost = base_cost
+            slope_cost = max(0.0, slope) * self.slope_factor
+            step_energy_spent = movement_cost + slope_cost
+            
+            self.battery_cost_movement += movement_cost
+            self.battery_cost_slope += slope_cost
 
         self.battery = max(0.0, self.battery - step_energy_spent)
 
@@ -273,6 +301,13 @@ class DroneNetworkEnv(gym.Env):
         gx, gy   = self.goal_pos
         prev_dist = float(np.sqrt((cx - gx)**2 + (cy - gy)**2))
         curr_dist = float(np.sqrt((self.current_pos[0] - gx)**2 + (self.current_pos[1] - gy)**2))
+        
+        self.min_dist_reached = min(self.min_dist_reached, curr_dist)
+        
+        if prev_dist - curr_dist > 0.001:
+            self.steps_moving_closer += 1
+        elif prev_dist - curr_dist < -0.001:
+            self.steps_moving_away += 1
 
         # ── 9. Termination logic ─────────────────────────────────────────────
         is_goal            = (self.current_pos == self.goal_pos)
@@ -324,6 +359,7 @@ class DroneNetworkEnv(gym.Env):
         info = {
             # Per-step basics
             "success":              is_goal,
+            "is_success":           is_goal,
             "collision":            is_collision,
             "boundary_violation":   is_boundary_violation,
             "invalid_move":         is_invalid_move,
@@ -369,6 +405,12 @@ class DroneNetworkEnv(gym.Env):
                 "ep_battery_remaining":  self.battery,
                 "ep_distance_to_goal":   curr_dist,
                 "ep_distance_reduction": self._ep_start_dist - curr_dist,
+                "ep_min_dist_reached":   self.min_dist_reached,
+                "ep_steps_closer":       self.steps_moving_closer,
+                "ep_steps_away":         self.steps_moving_away,
+                "ep_bat_cost_movement":  self.battery_cost_movement,
+                "ep_bat_cost_slope":     self.battery_cost_slope,
+                "ep_bat_cost_invalid":   self.battery_cost_invalid,
                 # Termination flags for callback aggregation
                 "term_goal_reached":     is_goal,
                 "term_battery_depleted": is_battery_depleted,

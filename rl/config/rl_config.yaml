@@ -57,12 +57,78 @@ training:
 curriculum:
   enabled: true
   stages:
-    - min_distance: 10
+    - name: "Stage 1: Navigation"
+      min_distance: 5
+      max_distance: 10
+      max_steps: 100
+      reward_weights:
+        progress_weight: 10.0
+        network_weight: 0.0
+        safety_weight: 0.0
+        movement_penalty: 0.1
+        energy_penalty: 0.0
+        outage_penalty: 0.0
+        invalid_move_penalty: 1.0
+        collision_penalty: 0.0
+        timeout_penalty: 10.0
+        goal_reward: 100.0
+      advancement_criteria:
+        min_timesteps: 50000
+        success_rate_threshold: 0.70
+    - name: "Stage 2: Obstacles"
+      min_distance: 10
+      max_distance: 20
+      max_steps: 150
+      reward_weights:
+        progress_weight: 10.0
+        network_weight: 0.0
+        safety_weight: 2.0
+        movement_penalty: 0.1
+        energy_penalty: 0.0
+        outage_penalty: 0.0
+        invalid_move_penalty: 2.0
+        collision_penalty: 0.0
+        timeout_penalty: 10.0
+        goal_reward: 100.0
+      advancement_criteria:
+        min_timesteps: 50000
+        success_rate_threshold: 0.70
+    - name: "Stage 3: Network"
+      min_distance: 15
       max_distance: 30
-    - min_distance: 30
-      max_distance: 70
-    - min_distance: 70
-      max_distance: 150
+      max_steps: 250
+      reward_weights:
+        progress_weight: 10.0
+        network_weight: 5.0
+        safety_weight: 2.0
+        movement_penalty: 0.1
+        energy_penalty: 0.01
+        outage_penalty: 2.0
+        invalid_move_penalty: 2.0
+        collision_penalty: 0.0
+        timeout_penalty: 10.0
+        goal_reward: 100.0
+      advancement_criteria:
+        min_timesteps: 100000
+        success_rate_threshold: 0.70
+    - name: "Stage 4: Full Real-World"
+      min_distance: 20
+      max_distance: 60
+      max_steps: 500
+      reward_weights:
+        progress_weight: 10.0
+        network_weight: 5.0
+        safety_weight: 2.0
+        movement_penalty: 0.1
+        energy_penalty: 0.05
+        outage_penalty: 5.0
+        invalid_move_penalty: 2.0
+        collision_penalty: 0.0
+        timeout_penalty: 20.0
+        goal_reward: 200.0
+      advancement_criteria:
+        min_timesteps: 200000
+        success_rate_threshold: 0.70
 
 debug:
   reward_components: false

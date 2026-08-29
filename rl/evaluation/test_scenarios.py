@@ -16,6 +16,21 @@ def generate_and_save_scenarios(df, metadata, num_scenarios=20, force=False):
     
     mission_gen = MissionGenerator(df, metadata)
     
+    # Check if existing scenarios are valid for current grid
+    if not force and os.path.exists(VALIDATION_PATH):
+        try:
+            with open(VALIDATION_PATH, "r") as f:
+                data = json.load(f)
+                for m in data:
+                    sx, sy = m["start"]
+                    gx, gy = m["goal"]
+                    if not (0 <= sx < mission_gen.grid_width and 0 <= sy < mission_gen.grid_height):
+                        force = True
+                        logger.warning(f"Existing validation scenarios are out of bounds for current grid ({mission_gen.grid_width}x{mission_gen.grid_height}). Forcing regeneration.")
+                        break
+        except Exception:
+            force = True
+
     # Generate Validation Scenarios
     if not os.path.exists(VALIDATION_PATH) or force:
         logger.info(f"Generating {num_scenarios} fixed validation missions...")
