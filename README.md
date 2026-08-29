@@ -1,227 +1,270 @@
-<<<<<<< HEAD
-# Network-Aware Reinforcement Learning for Autonomous Drone Route Planning
+Network-Aware Reinforcement Learning for Autonomous Drone Route Planning: 
+This repository contains a modular Reinforcement Learning (RL) framework for autonomous drone route planning using a preprocessed Geo-Network Map. The system trains a Proximal Policy Optimization (PPO) agent to navigate efficiently while balancing multiple objectives:
 
-This repository contains the complete, modular Reinforcement Learning (RL) training and evaluation subsystem for planning autonomous drone routes using a preprocessed **Geo-Network Map**. 
+Reaching the destination successfully
+Avoiding obstacles and unsafe terrain
+Maintaining reliable network connectivity
+Minimizing latency, packet loss, and communication outages
+Reducing travel distance and energy consumption
 
-The goal of the system is to train a Proximal Policy Optimization (PPO) agent to balance reaching its goal, avoiding physical obstacles, maintaining reliable network connectivity (minimizing latency, packet loss, and outages), and reducing travel distance and energy consumption.
+Project Architecture:
+                 GEO-NETWORK MAP
+        (Parquet Dataset + Metadata JSON)
+                          │
+                          ▼
+                  Data Validation
+                          │
+                          ▼
+                 Feature Processing
+          (Scaling & Normalization)
+                          │
+                          ▼
+              Mission Scenario Split
+          (Train / Validation / Test)
+                          │
+                          ▼
+              DroneNetworkEnv (Gymnasium)
+        ├── 8-Direction Action Space
+        ├── Network-Aware State Space
+        └── Multi-Objective Reward Engine
+                          │
+                          ▼
+                     PPO Agent
+        ├── Monitor & VecNormalize
+        └── Curriculum Learning
+                          │
+                          ▼
+               Training Callbacks
+      (Checkpointing, Metrics, TensorBoard)
+                          │
+                          ▼
+                     Best Model
+                          │
+                ┌─────────┴─────────┐
+                ▼                   ▼
+          PPO Evaluation      A* Baseline
+                └─────────┬─────────┘
+                          ▼
+              Performance Comparison
+        (Reports, Metrics, Visualizations)
+Geo-Network Map Dataset
 
----
+The RL environment operates on a preprocessed geographic and network dataset.
 
-## 1. Project Architecture
+Required Files:
+data/processed/geo_network_map.parquet
+data/processed/geo_network_metadata.json
+Grid Cell Attributes
+Spatial & Terrain Features
+cell_id
+grid_x, grid_y
+latitude, longitude
+is_obstacle
+obstacle_distance
+elevation
+slope
+Network Metrics
+rssi
+rsrp
+sinr
+latency
+packet_loss
+throughput
+Infrastructure Metadata
+nearest_tower_distance
+network_data_confidence
+network_source (measured or interpolated)
+Data Policy
 
-The reinforcement learning pipeline is structured as follows:
+The training pipeline strictly requires real geo-network data.
 
-```
-                  [ GEO-NETWORK MAP ] (Parquet + Metadata JSON)
-                           │
-                           ▼
-                  [ DATA VALIDATION ]
-                           │
-                           ▼
-                 [ FEATURE PROCESSOR ] (Standardizes & Scaler Joblib)
-                           │
-                           ▼
-              [ MISSION SCENARIO SPLIT ] (Train / Validation / Test)
-                           │
-                           ▼
-               [ GYMNASIUM ENVIRONMENT ] (DroneNetworkEnv)
-                ├── Actions Space (8 discrete directions)
-                ├── State Space (2D coordinates, Obstacles, Network Quality, Battery)
-                └── Reward Engine (Multiobjective cost weights)
-                           │
-                           ▼
-                     [ PPO AGENT ] (Stable-Baselines3)
-                ├── Monitor & VecNormalize Wrappers
-                └── Curriculum Learning Scheduler
-                           │
-                           ▼
-                 [ PERIODIC CALLBACKS ] (Checkpointing, TensorBoard)
-                           │
-                           ▼
-                    [ BEST MODEL ]
-                           │
-                 ┌─────────┴─────────┐
-                 ▼                   ▼
-         [ PPO EVALUATION ]     [ A* PATH BASELINE ]
-                 └─────────┬─────────┘
-                           ▼
-               [ COMPARISON & REPORTS ] (CSV/JSON summaries + Heatmap Plotting)
-```
+If the dataset is unavailable, execution stops with:
 
----
+ERROR: Real Geo-Network Map not found.
+Please build data/processed/geo_network_map.parquet before training.
 
-## 2. Geo-Network Map Data Format
+Missing network measurements are handled using:
+Coverage analysis
+Availability masks (1 = available, 0 = missing)
+Stable observation-space representation
+Environment Design
+Observation Space
 
-The training pipeline loads real-world geographic, obstacle, and cellular network data from the following locations:
-* **Parquet Map**: `data/processed/geo_network_map.parquet`
-* **Metadata JSON**: `data/processed/geo_network_metadata.json`
+The agent receives a normalized state vector containing:
 
-### Grid Cell Attributes
-Each grid cell in the parquet map contains:
-* **Spatial & Physical**: `cell_id` (int), `grid_x` (int), `grid_y` (int), `latitude` (float), `longitude` (float), `is_obstacle` (bool), `obstacle_distance` (float), `elevation` (float), `slope` (float)
-* **Network Measurements**: `rssi` (float), `rsrp` (float), `sinr` (float), `latency` (float), `packet_loss` (float), `throughput` (float)
-* **Infrastructure & Metadata**: `nearest_tower_distance` (float), `network_data_confidence` (float), `network_source` (str: `"measured"` or `"interpolated"`)
+Navigation Features:
+Current position (x, y)
+Goal position (x, y)
+Relative offsets (dx, dy)
+Euclidean distance to goal
+Obstacle Awareness
+Obstacle radar in 8 directions
+Nearest obstacle distance
+Network Features
+RSSI
+RSRP
+SINR
+Latency
+Packet loss
+Throughput
 
-### Data Policy
-* **Real Data Only**: The training pipeline enforces that `data/processed/geo_network_map.parquet` and `metadata.json` exist. If missing, it immediately stops and displays a clear error:
-  `ERROR: Real Geo-Network Map not found. Please build data/processed/geo_network_map.parquet before training.`
-* **Missing Value Handling**: Not all network metrics are available for all cells. The pipeline automatically calculates metric coverage and masks missing values (providing value + availability flag `0` / `1`) to keep the PPO input space stable.
+Each metric is paired with an availability mask to account for missing data.
 
----
+Neighbor Network Awareness (Optional)
 
-## 3. State and Action Spaces
+When enabled, neighboring cells contribute:
 
-### Observation Space (State)
-The agent receives a fixed-size normalized vector representing the current state of the environment:
-1. **Position & Navigational**: Current `x, y` (normalized), Goal `x, y` (normalized), Deltas `dx, dy`, and direct Euclidean distance to the goal.
-2. **Obstacle Proximity Radar**: A lookahead distance radar checking in 8 directions (North, South, East, West, and diagonals) for the nearest obstacle, plus the overall nearest obstacle distance.
-3. **Signal Attributes**: Consolidates RSSI, RSRP, SINR, Latency, Packet Loss, and Throughput values paired with binary **availability masks** (1.0 if measured, 0.0 if missing/null).
-4. **Neighbor Network Awareness**: (If `include_neighbor_network` is enabled) Appends the consolidated network quality score and data confidence for neighboring grid cells (North, South, East, West). This allows the agent to evaluate spatial trends in network strength before deciding on movement.
-5. **Battery Capacity**: Remaining battery ratio `[0.0, 1.0]`.
-6. **Terrain Info**: Elevation and slope metrics combined with availability masks.
+Network quality score
+Data confidence values
 
-### Action Space
-Discrete action space of size 8 representing grid transitions:
-* `0`: NORTH (0, 1)
-* `1`: SOUTH (0, -1)
-* `2`: EAST (1, 0)
-* `3`: WEST (-1, 0)
-* `4`: NORTH_EAST (1, 1)
-* `5`: NORTH_WEST (-1, 1)
-* `6`: SOUTH_EAST (1, -1)
-* `7`: SOUTH_WEST (-1, -1)
+This allows the agent to anticipate connectivity trends before moving.
 
-Cardinal movements consume a base energy of `0.5`, while diagonal movements consume `0.7`. Slopes add a deterministic energy cost penalty: `slope_cost = max(0, slope) * slope_factor`.
+Battery Status
+Remaining battery ratio [0,1]
+Terrain Information
+Elevation
+Slope
+Availability masks
+Action Space
 
----
+The environment uses an 8-direction discrete action space:
+Action	Movement
+0	North
+1	South
+2	East
+3	West
+4	North-East
+5	North-West
+6	South-East
+7	South-West
+Energy Consumption
+Cardinal movement: 0.5 units
+Diagonal movement: 0.7 units
 
-## 4. Reward Engine
+Additional terrain cost:
 
-The `RewardCalculator` evaluates every step against multiple goals:
+slope_cost = max(0, slope) × slope_factor
+Reward Function
 
-$$\text{Total Reward} = W_{progress} \times \text{Goal Progress} + W_{network} \times \text{Network Quality} + W_{safety} \times \text{Obstacle Proximity} - W_{movement} \times \text{Movement Cost} - W_{energy} \times \text{Energy Cost} - W_{outage} \times \text{Connectivity Outage} + W_{goal} \times \text{Goal Reached} - W_{collision} \times \text{Collision}$$
+The reward system balances navigation efficiency, connectivity, safety, and energy usage.
 
-* **Goal Progress**: Compares $\text{Distance}_{\text{prev}} - \text{Distance}_{\text{curr}}$. Positive reward for moving closer; negative penalty for moving away.
-* **Network Quality**: Uses a normalized consolidated quality score from `NetworkQualityCalculator` (renormalizes weights if signal, latency, packet loss, or throughput metrics are missing).
-* **Connectivity Outage**: Triggers when $\text{Network Quality} < \text{Threshold}$. Outage penalty increases with duration ($\text{consecutive outage steps}$) to strongly discourage sustained communication loss.
-* **Obstacle Safety Margin**: Proximity potential field penalty when the drone enters a 3-cell safety margin around obstacles.
-* **Movement Cost & Energy Cost**: Standard small step penalties to minimize route distance and battery draw.
-* **Goal Reward & Collision Penalty**: terminal boundary rewards.
+$$ Reward = W_{progress} \cdot Progress + W_{network} \cdot NetworkQuality + W_{safety} \cdot Safety - W_{movement} \cdot MovementCost - W_{energy} \cdot EnergyCost - W_{outage} \cdot OutagePenalty + W_{goal} \cdot GoalReward - W_{collision} \cdot CollisionPenalty $$
+Reward Components
+Component	Description
+Goal Progress	Rewards movement toward the destination
+Network Quality	Rewards strong and reliable connectivity
+Outage Penalty	Penalizes sustained communication loss
+Obstacle Safety	Penalizes movement near obstacles
+Movement Cost	Encourages shorter routes
+Energy Cost	Encourages battery-efficient navigation
+Goal Reward	Reward for successfully reaching the target
+Collision Penalty	Penalty for obstacle collisions
 
----
+The network-quality term is computed using a consolidated score derived from available signal and communication metrics.
 
-## 5. Training Subsystem
+Training Pipeline
 
-The training code (`rl/training/train_ppo.py`) integrates:
-* **Reproducibility**: Sets seeds across random, NumPy, PyTorch, Gym, and Stable-Baselines3.
-* **Wrappers**: Vectorizes the Gymnasium environment, wraps with `Monitor` to capture stats, and wraps in `VecNormalize` to compute running means and standard deviations of observations.
-* **TensorBoard logging**: Tracks rewards, success rate, collision rates, battery status, network quality, average latency, and average packet loss.
-* **Custom callbacks**:
-  * `CustomMetricsCallback`: Automatically records episode stats and saves them to `logs/training_metrics.csv`.
-  * `CheckpointWithVecNormalizeCallback`: Periodically saves PPO models and corresponding `VecNormalize` statistics.
-  * `CurriculumCallback`: Gradually increases difficulty (Stage 1: short distance; Stage 2: medium distance; Stage 3: long distance).
+The training subsystem (rl/training/train_ppo.py) includes:
 
----
+Reproducibility
+Random seed initialization
+NumPy seeding
+PyTorch seeding
+Gymnasium seeding
+Stable-Baselines3 seeding
+Environment Wrappers
+Monitor
+VecNormalize
+TensorBoard Logging
 
-## 6. A* Baseline and Comparison
+Tracks:
 
-To demonstrate the benefits of network-aware RL path planning, the evaluation subsystem (`rl/evaluation/evaluate.py`) compares the trained PPO agent against a standard A* path planner on identical, unseen test missions.
+Episode rewards
+Success rate
+Collision rate
+Battery usage
+Network quality
+Latency
+Packet loss
+Custom Callbacks
+CustomMetricsCallback
 
-The A* planner optimizes solely for the shortest obstacle-free path (using Octile distances on the 8-directional grid) and ignores all cellular parameters. PPO is expected to take slightly longer, network-aware paths to bypass cellular dead zones.
+Records episode statistics and exports:
 
----
+logs/training_metrics.csv
+CheckpointWithVecNormalizeCallback
 
-## 7. Configuration Details
+Saves:
 
-Configurations are kept inside `rl/config/rl_config.yaml`. 
+PPO checkpoints
+VecNormalize statistics
+CurriculumCallback
 
-This defines:
-* Battery parameters
-* Reward weights (easily tunable)
-* PPO parameters (epochs, clip range, learning rate, GAE lambda, etc.)
-* Training steps
-* Curriculum boundaries
+Training difficulty increases progressively:
 
----
+Stage	Mission Length
+Stage 1	Short-range
+Stage 2	Medium-range
+Stage 3	Long-range
+Evaluation and Baseline Comparison
 
-## 8. Commands
+The evaluation module compares the trained PPO agent against a traditional A* path planner on unseen test missions.
 
-### Install Dependencies
-```bash
+A* Planner
+Optimizes shortest obstacle-free path
+Uses octile distance heuristics
+Ignores network conditions
+PPO Agent
+Considers connectivity, safety, battery usage, and travel efficiency
+May choose longer routes to avoid network dead zones
+
+This comparison highlights the benefits of network-aware route planning.
+
+Configuration
+
+All configurable parameters are stored in:
+
+rl/config/rl_config.yaml
+
+Configuration categories include:
+
+Battery parameters
+Reward weights
+PPO hyperparameters
+Training duration
+Curriculum settings
+Usage
+Install Dependencies
 pip install -r requirements.txt
-```
-
-### Validate Dataset Integrity
-Checks cells, uniqueness, coordinates, obstacles, and network coverages:
-```bash
+Validate Dataset
 python -m rl.data.validation
-```
 
-### Run gymnasium checks
-Verifies Gym API compliance:
-```bash
+Validates:
+
+Cell integrity
+Coordinate consistency
+Obstacle information
+Network metric coverage
+Verify Gymnasium Environment
 python -m rl.environment.drone_network_env
-```
-
-### Run Unit Tests
-Executes unit tests covering state builder, reward functions, env steps, and short PPO trainings:
-```bash
+Run Unit Tests
 python -m pytest rl/tests/
-```
-
-### Train, Evaluate, and Compare
-Runs the entire training, test set evaluation, A* comparison, and generates comparison plots:
-```bash
+Train, Evaluate, and Compare
 python run_training.py
-```
 
-### Run TensorBoard
-```bash
+This command:
+
+Trains the PPO agent
+Evaluates performance on test missions
+Runs A* baseline comparison
+Generates metrics and visualizations
+Launch TensorBoard
 tensorboard --logdir rl/logs/
-```
+Route Inference
 
-### Run Route Inference
-Performs route generation for custom start/goal coordinates:
-```bash
+Generate routes for custom start and goal coordinates:
+
 python -m rl.inference.route_inference
-```
-#   R L - B a s e d - D r o n e -  
- 
-=======
-# Mission Pilot AI — Lovable project export
+Key Objective
 
-This ZIP contains the core source code exported from the Lovable project:
-
-**SITUATION AWARE DRONE SYSTEM / Mission Pilot AI**
-
-Project ID: `aca8ab7b-7a16-4e6e-9048-f3e89af5257f`
-
-## Included
-
-- Interactive Leaflet/OpenStreetMap mission map
-- Start and destination coordinate selection
-- Bidirectional map/input synchronization
-- Coordinate validation
-- 50 km operational-range validation
-- Mission summary and direct-distance calculation
-- `/mission` analysis page
-- TanStack Router / TanStack Start configuration
-- Tailwind CSS design system and technical dashboard styling
-
-## Run
-
-Requirements: Node.js 20+ (or a compatible Bun setup).
-
-```bash
-npm install
-npm run dev
-```
-
-Then open the local URL printed by Vite.
-
-The map uses OpenStreetMap tiles, so internet access is required for map tiles.
-
-## Note
-
-The ZIP intentionally focuses on the application-specific source and required configuration rather than the large set of unused generated shadcn/ui component files present in the Lovable repository.
->>>>>>> e196950b2079677db3dfc8852638daf1eee6ec95
+The primary objective of this project is to demonstrate that a network-aware reinforcement learning agent can generate safer and more reliable autonomous drone routes by jointly optimizing navigation efficiency, connectivity quality, obstacle avoidance, and energy consumption in real-world geo-network environments.
