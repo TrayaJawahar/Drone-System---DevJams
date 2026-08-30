@@ -1,0 +1,134 @@
+project:
+  name: "Network-Aware Drone Route Planning"
+
+data:
+  geo_network_map: "data/processed/geo_network_map.parquet"
+  metadata: "data/processed/geo_network_metadata.json"
+
+environment:
+  max_steps: 500
+  terminate_on_collision: false  # Keep episode alive on collision; drone stays, gets penalty
+  battery:
+    initial: 100.0
+    horizontal_cost: 0.5
+    diagonal_cost: 0.7
+    slope_factor: 0.05
+
+observation:
+  include_neighbor_network: true
+  include_diagonal_neighbors: false
+  include_terrain: true
+
+reward:
+  progress_weight: 5.0
+  network_weight: 3.0
+  safety_weight: 2.0
+  movement_penalty: 0.1
+  energy_penalty: 0.05
+  outage_penalty: 5.0
+  invalid_move_penalty: 2.0    # penalty for hitting obstacle/boundary (non-terminating)
+  collision_penalty: 100.0     # only applied when terminate_on_collision: true
+  goal_reward: 100.0
+  timeout_penalty: 10.0
+
+network:
+  outage_threshold: 0.3
+  min_confidence: 0.5
+
+ppo:
+  learning_rate: 0.0003
+  n_steps: 2048
+  batch_size: 64
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+
+training:
+  total_timesteps: 500000
+  checkpoint_frequency: 50000
+  evaluation_frequency: 25000
+  seed: 42
+  device: "auto"  # "cuda" | "cpu" | "auto" (auto detects CUDA)
+
+curriculum:
+  enabled: true
+  stages:
+    - name: "Stage 1: Navigation"
+      min_distance: 5
+      max_distance: 10
+      max_steps: 100
+      reward_weights:
+        progress_weight: 10.0
+        network_weight: 0.0
+        safety_weight: 0.0
+        movement_penalty: 0.1
+        energy_penalty: 0.0
+        outage_penalty: 0.0
+        invalid_move_penalty: 1.0
+        collision_penalty: 0.0
+        timeout_penalty: 10.0
+        goal_reward: 100.0
+      advancement_criteria:
+        min_timesteps: 50000
+        success_rate_threshold: 0.70
+    - name: "Stage 2: Obstacles"
+      min_distance: 10
+      max_distance: 20
+      max_steps: 150
+      reward_weights:
+        progress_weight: 10.0
+        network_weight: 0.0
+        safety_weight: 2.0
+        movement_penalty: 0.1
+        energy_penalty: 0.0
+        outage_penalty: 0.0
+        invalid_move_penalty: 2.0
+        collision_penalty: 0.0
+        timeout_penalty: 10.0
+        goal_reward: 100.0
+      advancement_criteria:
+        min_timesteps: 50000
+        success_rate_threshold: 0.70
+    - name: "Stage 3: Network"
+      min_distance: 15
+      max_distance: 30
+      max_steps: 250
+      reward_weights:
+        progress_weight: 10.0
+        network_weight: 5.0
+        safety_weight: 2.0
+        movement_penalty: 0.1
+        energy_penalty: 0.01
+        outage_penalty: 2.0
+        invalid_move_penalty: 2.0
+        collision_penalty: 0.0
+        timeout_penalty: 10.0
+        goal_reward: 100.0
+      advancement_criteria:
+        min_timesteps: 100000
+        success_rate_threshold: 0.70
+    - name: "Stage 4: Full Real-World"
+      min_distance: 20
+      max_distance: 60
+      max_steps: 500
+      reward_weights:
+        progress_weight: 10.0
+        network_weight: 5.0
+        safety_weight: 2.0
+        movement_penalty: 0.1
+        energy_penalty: 0.05
+        outage_penalty: 5.0
+        invalid_move_penalty: 2.0
+        collision_penalty: 0.0
+        timeout_penalty: 20.0
+        goal_reward: 200.0
+      advancement_criteria:
+        min_timesteps: 200000
+        success_rate_threshold: 0.70
+
+debug:
+  reward_components: false

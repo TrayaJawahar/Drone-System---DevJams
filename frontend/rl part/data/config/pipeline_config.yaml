@@ -1,0 +1,62 @@
+region:
+  name: "Koramangala, Bangalore, India"
+  center_latitude: 12.9352
+  center_longitude: 77.6245
+  width_km: 2.0
+  height_km: 2.0
+grid:
+  cell_size_meters: 100
+osm:
+  endpoint: "https://overpass-api.de/api/interpreter"
+  obstacle_tags:
+    buildings: true        
+    water: true            
+    industrial: false    
+  timeout: 120
+  max_retries: 3
+
+terrain:
+  endpoint: "https://portal.opentopography.org/API/globaldem"
+  dem_type: "SRTMGL1"
+  api_key: "YOUR_OPENTOPOGRAPHY_API_KEY"
+
+towers:
+  endpoint: "https://opencellid.org/cell/getInArea"
+  bulk_download_url: "https://opencellid.org/ocid/downloads"
+  api_key: "YOUR_OPENCELLID_API_KEY"
+  mcc_filter: []
+  radio_filter: ["LTE", "NR", "UMTS", "GSM"]
+  search_radius_meters: 5000
+
+network_estimation:
+  tx_power:
+    NR: 43.0       
+    LTE: 43.0      
+    UMTS: 43.0     
+    GSM: 43.0      
+  frequency_mhz:
+    NR: 3500.0
+    LTE: 2100.0
+    UMTS: 2100.0
+    GSM: 900.0
+  shadow_margin_db:
+    NR: 8.0
+    LTE: 8.0
+    UMTS: 10.0
+    GSM: 12.0
+  path_loss_exponent: 3.5
+  noise_floor_dbm: -100.0
+  bandwidth_mhz:
+    NR: 100.0
+    LTE: 20.0
+    UMTS: 5.0
+    GSM: 0.2
+  min_rssi_dbm: -120.0
+
+output:
+  parquet_path: "data/processed/geo_network_map.parquet"
+  metadata_path: "data/processed/geo_network_metadata.json"
+  raw_osm_path: "data/raw/osm/"
+  raw_terrain_path: "data/raw/terrain/"
+  raw_towers_path: "data/raw/towers/"
+  save_intermediates: true
