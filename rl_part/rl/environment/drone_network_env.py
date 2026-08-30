@@ -255,24 +255,43 @@ class DroneNetworkEnv(gym.Env):
             self.invalid_move_count += 1
 
         # ── 4. Battery ───────────────────────────────────────────────────────
-        base_cost  = self.diagonal_cost if is_diagonal(action) else self.horizontal_cost
+        # ── 4. Battery consumption ──────────────────────────────────────────
+        base_cost = (
+            self.diagonal_cost
+            if is_diagonal(action)
+            else self.horizontal_cost
+        )
+
         if is_invalid_move:
-            step_energy_spent = base_cost * 0.5   # half cost for wasted move
+            # Invalid moves still consume some energy because the drone
+            # attempted the movement but remained in the same cell.
+            step_energy_spent = base_cost * 0.5
+
             self.battery_cost_invalid += step_energy_spent
+
         else:
+            # Valid movement
             cell_data = self.cell_lookup.get((nx, ny), {})
-            slope     = cell_data.get("slope", 0.0)
+
+            slope = cell_data.get("slope", 0.0)
+
             if pd.isnull(slope):
                 slope = 0.0
-            
+
             movement_cost = base_cost
-            slope_cost = max(0.0, slope) * self.slope_factor
+            slope_cost = max(0.0, float(slope)) * self.slope_factor
+
             step_energy_spent = movement_cost + slope_cost
-            
+
             self.battery_cost_movement += movement_cost
             self.battery_cost_slope += slope_cost
 
-        self.battery = max(0.0, self.battery - step_energy_spent)
+        # IMPORTANT:
+        # Battery must be reduced for BOTH valid and invalid movement attempts.
+        self.battery = max(
+            0.0,
+            self.battery - step_energy_spent
+        )
 
         # ── 5. Move drone (only on valid moves) ──────────────────────────────
         if not is_invalid_move:

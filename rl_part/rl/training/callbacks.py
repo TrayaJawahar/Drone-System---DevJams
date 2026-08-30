@@ -100,7 +100,15 @@ class CustomMetricsCallback(BaseCallback):
             ep_len        = int(info.get("ep_length",            info.get("step_count", 0)))
             inv_count     = int(info.get("ep_invalid_move_count", 0))
             inv_rate      = float(info.get("ep_invalid_move_rate", 0.0))
-            battery_rem   = float(info.get("ep_battery_remaining", info.get("battery", 0.0)))
+            battery_rem = float(
+            info.get(
+                "ep_battery_remaining",
+                info.get("battery", np.nan)
+                     )
+            )
+
+            if not np.isfinite(battery_rem):
+                battery_rem = np.nan
             dist_goal     = float(info.get("ep_distance_to_goal",  info.get("distance_to_goal", -1.0)))
             dist_red      = float(info.get("ep_distance_reduction", 0.0))
 

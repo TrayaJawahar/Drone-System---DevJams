@@ -10,8 +10,8 @@ environment:
   terminate_on_collision: false  # Keep episode alive on collision; drone stays, gets penalty
   battery:
     initial: 100.0
-    horizontal_cost: 0.5
-    diagonal_cost: 0.7
+    horizontal_cost: 0.2
+    diagonal_cost: 0.3
     slope_factor: 0.05
 
 observation:
