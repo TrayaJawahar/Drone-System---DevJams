@@ -11,13 +11,11 @@ dist
 dist-ssr
 *.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+data/config/api_keys.yaml
+data/raw/
+data/processed/
+*.pyc
+__pycache__/
+.venv/
+*.log
+api_keys.yaml
